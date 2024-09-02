@@ -45,19 +45,19 @@ class Student
         void inputDetails(){
             cout << "Enter student name: ";
             cin >> this->name;
-            cout << "Enter the rollnumber: ";
+            cout << "Enter the id: ";
             cin >> this->id;
 
             for (int i = 0; i < 5; i++)
             {
-                cout << "Enter the subject details: " << i+1 << endl;
+                cout << "Enter subject details: " << i+1 << endl;
                 subjects[i].subjectDetails();
             }
             
         }
         void studentDetails(){
             cout<<"Student name: "<< this->name <<endl;
-            cout << "Roll number: "<< this->id << endl;
+            cout << "ID: "<< this->id << endl;
             for (int i = 0; i < 5; i++)
             {
                 subjects[i].displaySubjectDetails();
@@ -67,19 +67,19 @@ class Student
 };
 int main()
 {
-    const int numberOfStudents = 2;
-    Student students[numberOfStudents];
+    const int numberofStudents = 2;
+    Student students[numberofStudents];
 
-    for (int i = 0; i < numberOfStudents; i++)
+    for (int i = 0; i < numberofStudents; i++)
     {
         cout<< "Enter the details of the student " <<i+1 << ": "<< endl;
         students[i].inputDetails();
     }
 
-    cout << "\nstudentDetails: " << endl;
-    for (int i = 0; i < numberOfStudents; i++)
+    cout << "\nStudents Detail: " << endl;
+    for (int i = 0; i < numberofStudents; i++)
     {
-        cout<< "'\nDetails of the student " << i+1 << ": " <<endl;
+        cout<< "'\nMarks of the student " << i+1 << ": " <<endl;
         students[i].studentDetails();
     }
     
