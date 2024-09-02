@@ -13,19 +13,25 @@ class Subject
     string subjectName;
     int marksObtained;
     public:
+
+        void setSubjectDetails(string name, int marks){
+            this->subjectName = name;
+            this->marksObtained = marks;
+        }
+
         void subjectDetails(){
             cout << "Enter your subject: ";
-            cin >> subjectName;
-            cout << "Enter marks obtained in " << subjectName << ": " ;
-            cin >> marksObtained;
+            cin >> this->subjectName;
+            cout << "Enter marks obtained in " << this->subjectName << ": " ;
+            cin >> this->marksObtained;
         }
 
         int getMarks(){
-            return marksObtained;
+            return this->marksObtained;
         }
 
         void displaySubjectDetails(){
-            cout<< subjectName << ": " << marksObtained << endl;
+            cout<< this->subjectName << ": " << this->marksObtained << endl;
         }
 };
 class Student
@@ -38,9 +44,9 @@ class Student
     public:
         void inputDetails(){
             cout << "Enter student name: ";
-            cin >> name;
+            cin >> this->name;
             cout << "Enter the rollnumber: ";
-            cin >> id;
+            cin >> this->id;
 
             for (int i = 0; i < 5; i++)
             {
@@ -50,8 +56,8 @@ class Student
             
         }
         void studentDetails(){
-            cout<<"Student name: "<< name <<endl;
-            cout << "Roll number: "<< id << endl;
+            cout<<"Student name: "<< this->name <<endl;
+            cout << "Roll number: "<< this->id << endl;
             for (int i = 0; i < 5; i++)
             {
                 subjects[i].displaySubjectDetails();
