@@ -67,8 +67,21 @@ class Student
 };
 int main()
 {
-    Student student1;
-    student1.inputDetails();
-    student1.studentDetails();
+    const int numberOfStudents = 2;
+    Student students[numberOfStudents];
+
+    for (int i = 0; i < numberOfStudents; i++)
+    {
+        cout<< "Enter the details of the student " <<i+1 << ": "<< endl;
+        students[i].inputDetails();
+    }
+
+    cout << "\nstudentDetails: " << endl;
+    for (int i = 0; i < numberOfStudents; i++)
+    {
+        cout<< "'\nDetails of the student " << i+1 << ": " <<endl;
+        students[i].studentDetails();
+    }
+    
     return 0;
 }
