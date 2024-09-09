@@ -45,8 +45,13 @@ private:
     string name;
     Subject subjects[5];
     float CGPA;
+    
+    static int totalStudents;
 
 public:
+    Student(){
+        totalStudents++;
+    }
     void inputDetails()
     {
         cout << "Enter student name: ";
@@ -69,11 +74,18 @@ public:
             subjects[i].displaySubjectDetails();
         }
     }
+    static void displayTotalStudents()
+    {
+        cout << "Total number of students: " << totalStudents << endl;
+    }
 };
+int Student::totalStudents = 0;
 int main()
 {
-    const int numberofStudents = 2;
-    Student students[numberofStudents];
+    int numberofStudents;
+    cout<<"Enter the number of students: "<<endl;
+    cin>>numberofStudents;
+    Student *students = new Student[numberofStudents];
 
     for (int i = 0; i < numberofStudents; i++)
     {
@@ -87,6 +99,8 @@ int main()
         cout << "'\nMarks of the student " << i + 1 << ": " << endl;
         students[i].studentDetails();
     }
+    Student::displayTotalStudents();
+    delete[] students;
 
     return 0;
 }
