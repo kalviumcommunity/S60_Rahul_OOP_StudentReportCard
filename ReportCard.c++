@@ -99,7 +99,6 @@ int main()
         cout << "'\nMarks of the student " << i + 1 << ": " << endl;
         students[i].studentDetails();
     }
-    Student::displayTotalStudents();
     delete[] students;
 
     return 0;
