@@ -10,18 +10,18 @@ using namespace std;
 class Subject
 {
 private:
-    string subjectName;
-    int marksObtained;
+    string subjectName; //Hidden
+    int marksObtained; //Hidden
 
 public:
-    // setter for subject name and marks
+    // Mutator for subject details
     void setSubjectDetails(const string name, int marks)
     {
         subjectName = name;
         marksObtained = marks;
     }
 
-    // Method to input subject details
+    // Mutator for subject details
     void inputSubjectDetails()
     {
         cout << "Enter your subject: ";
@@ -30,13 +30,13 @@ public:
         cin >> marksObtained;
     }
 
-    // Getter for marks obtained
+    // Accessor for marks obtained
     int getMarks() const
     {
         return marksObtained;
     }
 
-    // Method to display subject details
+    // Public method to display subject details
     void displaySubjectDetails()
     {
         cout << subjectName << ": " << marksObtained << endl;
@@ -45,12 +45,12 @@ public:
 class Student
 {
 private:
-    long long id;
-    string name;
-    Subject subjects[5];
-    float CGPA;
+    long long id; //Hidden
+    string name; //Hidden
+    Subject subjects[5]; //Hidden
+    float CGPA; //Hidden
 
-    static int totalStudents;
+    static int totalStudents; //Hidden
 
 public:
     // Constructor to increment total students
