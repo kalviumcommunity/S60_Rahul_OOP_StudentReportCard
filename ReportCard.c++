@@ -1,29 +1,28 @@
-#include <cmath>
-#include <cstdio>
-#include <vector>
 #include <iostream>
-#include <stdlib.h>
-#include <algorithm>
-#include <iomanip>
+#include <string>
 using namespace std;
 
-class Subject
-{
+class Subject {
 private:
-    string subjectName; //Hidden
-    int marksObtained; //Hidden
+    string subjectName; // Hidden
+    int marksObtained;  // Hidden
 
 public:
+    // Constructor to initialize subject details
+    Subject(const string name = "", int marks = 0) 
+        : subjectName(name), marksObtained(marks) {}
+
+    // Destructor
+    ~Subject() {}
+
     // Mutator for subject details
-    void setSubjectDetails(const string name, int marks)
-    {
+    void setSubjectDetails(const string &name, int marks) {
         subjectName = name;
         marksObtained = marks;
     }
 
-    // Mutator for subject details
-    void inputSubjectDetails()
-    {
+    // Method to input subject details
+    void inputSubjectDetails() {
         cout << "Enter your subject: ";
         cin >> subjectName;
         cout << "Enter marks obtained in " << subjectName << ": ";
@@ -31,76 +30,64 @@ public:
     }
 
     // Accessor for marks obtained
-    int getMarks() const
-    {
+    int getMarks() const {
         return marksObtained;
     }
 
     // Public method to display subject details
-    void displaySubjectDetails()
-    {
+    void displaySubjectDetails() const {
         cout << subjectName << ": " << marksObtained << endl;
     }
 };
-class Student
-{
-private:
-    long long id; //Hidden
-    string name; //Hidden
-    Subject subjects[5]; //Hidden
-    float CGPA; //Hidden
 
-    static int totalStudents; //Hidden
+class Student {
+private:
+    long long id;           // Hidden
+    string name;           // Hidden
+    Subject subjects[5];   // Hidden
+    static int totalStudents; // Hidden
 
 public:
-    // Constructor to increment total students
-    Student()
-    {
+    // Constructor to initialize student details
+    Student(const string name = "", long long id = 0) 
+        : name(name), id(id) {
         totalStudents++;
     }
 
-    // Setter for student details
-    void setStudentDetails(const string name, long long id)
-    {
-        this->name = name;
-        this->id = id;
+    // Destructor
+    ~Student() {
+        totalStudents--;
     }
 
     // Method to input student details
-    void inputDetails()
-    {
+    void inputDetails() {
         cout << "Enter student name: ";
         cin >> name;
-        cout << "Enter the id: ";
+        cout << "Enter the ID: ";
         cin >> id;
 
-        for (int i = 0; i < 5; i++)
-        {
+        for (int i = 0; i < 5; i++) {
             cout << "Enter subject details: " << i + 1 << endl;
             subjects[i].inputSubjectDetails();
         }
     }
 
     // Method to display student details
-    void displayStudentDetails()
-    {
+    void displayStudentDetails() const {
         cout << "Student name: " << name << endl;
-        cout << "ID: " << this->id << endl;
-        for (int i = 0; i < 5; i++)
-        {
+        cout << "ID: " << id << endl;
+        for (int i = 0; i < 5; i++) {
             subjects[i].displaySubjectDetails();
         }
     }
 
     // Method to display total number of students
-    static void displayTotalStudents()
-    {
+    static void displayTotalStudents() {
         cout << "Total number of students: " << totalStudents << endl;
     }
 
     // Getter for subject
-    Subject &getSubject(int index)
-    {
+    Subject &getSubject(int index) {
         return subjects[index];
     }
 };
@@ -108,40 +95,18 @@ public:
 // Static variable to keep track of total number of students
 int Student::totalStudents = 0;
 
-int main()
-{
+int main() {
     int numberOfStudents;
     cout << "Enter the number of students: ";
     cin >> numberOfStudents;
     Student *students = new Student[numberOfStudents];
 
-    for (int i = 0; i < numberOfStudents; i++)
-    {
+    for (int i = 0; i < numberOfStudents; i++) {
         cout << "Enter details for student " << i + 1 << ":" << endl;
-
-        string name;
-        long long id;
-        cout << "Enter student name: ";
-        cin >> name;
-        cout << "Enter student ID: ";
-        cin >> id;
-        students[i].setStudentDetails(name, id);
-
-        for (int j = 0; j < 5; j++)
-        {
-            string subjectName;
-            int marks;
-            cout << "Enter subject " << j + 1 << " name: ";
-            cin >> subjectName;
-            cout << "Enter marks for " << subjectName << ": ";
-            cin >> marks;
-            students[i].getSubject(j).setSubjectDetails(subjectName, marks);
-        }
+        students[i].inputDetails();
     }
 
-    
-    for (int i = 0; i < numberOfStudents; i++)
-    {
+    for (int i = 0; i < numberOfStudents; i++) {
         cout << "\nDetails of student " << i + 1 << ":" << endl;
         students[i].displayStudentDetails();
     }
