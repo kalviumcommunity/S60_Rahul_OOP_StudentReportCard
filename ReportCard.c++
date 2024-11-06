@@ -45,11 +45,12 @@ private:
     string name;
     Subject subjects[5];
     float CGPA;
-    
+
     static int totalStudents;
 
 public:
-    Student(){
+    Student()
+    {
         totalStudents++;
     }
     void inputDetails()
@@ -83,8 +84,8 @@ int Student::totalStudents = 0;
 int main()
 {
     int numberofStudents;
-    cout<<"Enter the number of students: "<<endl;
-    cin>>numberofStudents;
+    cout << "Enter the number of students: " << endl;
+    cin >> numberofStudents;
     Student *students = new Student[numberofStudents];
 
     for (int i = 0; i < numberofStudents; i++)
