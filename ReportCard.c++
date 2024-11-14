@@ -61,7 +61,7 @@ public:
         totalStudents--;
     }
 
-    // Method to input student details
+    // Virtual method to input student details (polymorphic)
     virtual void inputDetails() {
         cout << "Enter student name: ";
         cin >> name;
@@ -74,7 +74,7 @@ public:
         }
     }
 
-    // Method to display student details
+    // Virtual method to display student details (polymorphic)
     virtual void displayStudentDetails() const {
         cout << "Student name: " << name << endl;
         cout << "ID: " << id << endl;
@@ -109,7 +109,7 @@ public:
                     const string thesis = "", const string supervisor = "")
         : Student(name, id), thesisTitle(thesis), supervisorName(supervisor) {}
 
-    // Method to input graduate student details
+    // Overridden method to input graduate student details
     void inputDetails() override {
         Student::inputDetails();  // Call base class input method
         cout << "Enter thesis title: ";
@@ -119,7 +119,7 @@ public:
         getline(cin, supervisorName);
     }
 
-    // Method to display graduate student details
+    // Overridden method to display graduate student details
     void displayStudentDetails() const override {
         Student::displayStudentDetails();  // Call base class display method
         cout << "Thesis Title: " << thesisTitle << endl;
@@ -132,7 +132,8 @@ int main() {
     cout << "Enter the number of students: ";
     cin >> numberOfStudents;
     
-    Student **students = new Student*[numberOfStudents]; // Use array of pointers to handle different types of students
+    // Use array of pointers to handle different types of students
+    Student **students = new Student*[numberOfStudents]; 
 
     for (int i = 0; i < numberOfStudents; i++) {
         int studentType;
@@ -140,6 +141,7 @@ int main() {
         cout << "Is the student a (1) Regular Student or (2) Graduate Student? ";
         cin >> studentType;
 
+        // Dynamically allocate the correct type of student
         if (studentType == 1) {
             students[i] = new Student();
         } else if (studentType == 2) {
@@ -149,16 +151,20 @@ int main() {
             students[i] = new Student();
         }
 
+        // Use polymorphic method
         students[i]->inputDetails();
     }
 
+    // Display the details of each student using polymorphism
     for (int i = 0; i < numberOfStudents; i++) {
         cout << "\nDetails of student " << i + 1 << ":" << endl;
-        students[i]->displayStudentDetails();
+        students[i]->displayStudentDetails(); // Polymorphic call
     }
 
+    // Display the total number of students
     Student::displayTotalStudents();
 
+    // Clean up dynamically allocated memory
     for (int i = 0; i < numberOfStudents; i++) {
         delete students[i]; // Clean up each student object
     }
