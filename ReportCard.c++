@@ -126,7 +126,8 @@ int main() {
     cout << "Enter the number of students: ";
     cin >> numberOfStudents;
     
-    Student **students = new Student*[numberOfStudents]; // Array of pointers to handle different types of students
+    // Use array of pointers to handle different types of students
+    Student **students = new Student*[numberOfStudents]; 
 
     for (int i = 0; i < numberOfStudents; i++) {
         int studentType;
@@ -134,6 +135,7 @@ int main() {
         cout << "Is the student a (1) Graduate Student? ";
         cin >> studentType;
 
+        // Dynamically allocate the correct type of student
         if (studentType == 1) {
             students[i] = new GraduateStudent();
         } else {
@@ -141,16 +143,20 @@ int main() {
             students[i] = new GraduateStudent();
         }
 
+        // Use polymorphic method
         students[i]->inputDetails();
     }
 
+    // Display the details of each student using polymorphism
     for (int i = 0; i < numberOfStudents; i++) {
         cout << "\nDetails of student " << i + 1 << ":" << endl;
-        students[i]->displayStudentDetails();
+        students[i]->displayStudentDetails(); // Polymorphic call
     }
 
+    // Display the total number of students
     Student::displayTotalStudents();
 
+    // Clean up dynamically allocated memory
     for (int i = 0; i < numberOfStudents; i++) {
         delete students[i]; // Clean up each student object
     }
