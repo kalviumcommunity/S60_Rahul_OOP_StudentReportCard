@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <vector> // For dynamic management of students
+#include <vector>
 using namespace std;
 
 // Class to manage Subject details
@@ -13,11 +13,6 @@ public:
     Subject(const string &name = "", int marks = 0)
         : subjectName(name), marksObtained(marks) {}
 
-    void setSubjectDetails(const string &name, int marks) {
-        subjectName = name;
-        marksObtained = marks;
-    }
-
     void inputSubjectDetails() {
         cout << "Enter your subject: ";
         cin >> subjectName;
@@ -28,10 +23,6 @@ public:
     void displaySubjectDetails() const {
         cout << subjectName << ": " << marksObtained << endl;
     }
-
-    int getMarks() const {
-        return marksObtained;
-    }
 };
 
 // Abstract base class for students
@@ -39,7 +30,7 @@ class Student {
 protected:
     long long id;
     string name;
-    vector<Subject> subjects; // Dynamic subject management
+    vector<Subject> subjects; // List of subjects
 
 public:
     Student(const string &name = "", long long id = 0)
@@ -49,6 +40,34 @@ public:
 
     virtual void inputDetails() = 0;
     virtual void displayStudentDetails() const = 0;
+};
+
+// Class for regular students
+class RegularStudent : public Student {
+public:
+    RegularStudent(const string &name = "", long long id = 0)
+        : Student(name, id) {}
+
+    void inputDetails() override {
+        cout << "Enter student name: ";
+        cin >> name;
+        cout << "Enter ID: ";
+        cin >> id;
+
+        for (int i = 0; i < 5; i++) {
+            Subject sub;
+            sub.inputSubjectDetails();
+            subjects.push_back(sub);
+        }
+    }
+
+    void displayStudentDetails() const override {
+        cout << "Student name: " << name << endl;
+        cout << "ID: " << id << endl;
+        for (const auto &sub : subjects) {
+            sub.displaySubjectDetails();
+        }
+    }
 };
 
 // Class for graduate students
@@ -65,7 +84,7 @@ public:
     void inputDetails() override {
         cout << "Enter student name: ";
         cin >> name;
-        cout << "Enter the ID: ";
+        cout << "Enter ID: ";
         cin >> id;
 
         for (int i = 0; i < 5; i++) {
@@ -75,7 +94,7 @@ public:
         }
 
         cout << "Enter thesis title: ";
-        cin.ignore(); // Clear the input buffer
+        cin.ignore(); // Clear input buffer
         getline(cin, thesisTitle);
         cout << "Enter supervisor name: ";
         getline(cin, supervisorName);
@@ -92,7 +111,7 @@ public:
     }
 };
 
-// Class to manage students (Single Responsibility)
+// Class to manage students
 class StudentManager {
 private:
     vector<Student *> students; // Polymorphic container
@@ -107,15 +126,17 @@ public:
 
     void addStudent() {
         int studentType;
-        cout << "Is the student a (1) Graduate Student? ";
+        cout << "Is the student (1) Regular or (2) Graduate? ";
         cin >> studentType;
 
         Student *student = nullptr;
         if (studentType == 1) {
+            student = new RegularStudent();
+        } else if (studentType == 2) {
             student = new GraduateStudent();
         } else {
-            cout << "Invalid choice, defaulting to Graduate Student." << endl;
-            student = new GraduateStudent();
+            cout << "Invalid choice. Defaulting to Regular Student." << endl;
+            student = new RegularStudent();
         }
 
         student->inputDetails();
