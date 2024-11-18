@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 using namespace std;
 
 // Class to manage Subject details
@@ -40,6 +41,7 @@ public:
 
     virtual void inputDetails() = 0;
     virtual void displayStudentDetails() const = 0;
+    virtual string getType() const = 0; // For identifying student type
 };
 
 // Class for regular students
@@ -67,6 +69,10 @@ public:
         for (const auto &sub : subjects) {
             sub.displaySubjectDetails();
         }
+    }
+
+    string getType() const override {
+        return "Regular Student";
     }
 };
 
@@ -109,43 +115,47 @@ public:
         cout << "Thesis Title: " << thesisTitle << endl;
         cout << "Supervisor Name: " << supervisorName << endl;
     }
+
+    string getType() const override {
+        return "Graduate Student";
+    }
+};
+
+// Factory for creating student objects
+class StudentFactory {
+public:
+    static unique_ptr<Student> createStudent(int studentType) {
+        switch (studentType) {
+            case 1:
+                return make_unique<RegularStudent>();
+            case 2:
+                return make_unique<GraduateStudent>();
+            default:
+                cout << "Invalid choice. Defaulting to Regular Student." << endl;
+                return make_unique<RegularStudent>();
+        }
+    }
 };
 
 // Class to manage students
 class StudentManager {
 private:
-    vector<Student *> students; // Polymorphic container
+    vector<unique_ptr<Student>> students; // Polymorphic container
 
 public:
-    ~StudentManager() {
-        for (Student *student : students) {
-            delete student;
-        }
-        students.clear();
-    }
-
     void addStudent() {
         int studentType;
         cout << "Is the student (1) Regular or (2) Graduate? ";
         cin >> studentType;
 
-        Student *student = nullptr;
-        if (studentType == 1) {
-            student = new RegularStudent();
-        } else if (studentType == 2) {
-            student = new GraduateStudent();
-        } else {
-            cout << "Invalid choice. Defaulting to Regular Student." << endl;
-            student = new RegularStudent();
-        }
-
+        unique_ptr<Student> student = StudentFactory::createStudent(studentType);
         student->inputDetails();
-        students.push_back(student);
+        students.push_back(move(student));
     }
 
     void displayAllStudents() const {
         for (size_t i = 0; i < students.size(); ++i) {
-            cout << "\nDetails of student " << i + 1 << ":" << endl;
+            cout << "\nDetails of student " << i + 1 << " (" << students[i]->getType() << "):" << endl;
             students[i]->displayStudentDetails();
         }
     }
