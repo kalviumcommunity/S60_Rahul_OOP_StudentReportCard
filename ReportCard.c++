@@ -1,25 +1,23 @@
 #include <iostream>
 #include <string>
+#include <vector> // For dynamic management of students
 using namespace std;
 
-// Base class: Subject
+// Class to manage Subject details
 class Subject {
 private:
-    string subjectName; // Hidden
-    int marksObtained;  // Hidden
+    string subjectName;
+    int marksObtained;
 
 public:
-    // Constructor to initialize subject details
-    Subject(const string name = "", int marks = 0) 
+    Subject(const string &name = "", int marks = 0)
         : subjectName(name), marksObtained(marks) {}
 
-    // Mutator for subject details
     void setSubjectDetails(const string &name, int marks) {
         subjectName = name;
         marksObtained = marks;
     }
 
-    // Method to input subject details
     void inputSubjectDetails() {
         cout << "Enter your subject: ";
         cin >> subjectName;
@@ -27,70 +25,43 @@ public:
         cin >> marksObtained;
     }
 
-    // Accessor for marks obtained
-    int getMarks() const {
-        return marksObtained;
-    }
-
-    // Public method to display subject details
     void displaySubjectDetails() const {
         cout << subjectName << ": " << marksObtained << endl;
     }
+
+    int getMarks() const {
+        return marksObtained;
+    }
 };
 
-// Abstract base class: Student
+// Abstract base class for students
 class Student {
 protected:
-    long long id;           // Hidden
-    string name;           // Hidden
-    Subject subjects[5];   // Hidden
-    static int totalStudents; // Hidden
+    long long id;
+    string name;
+    vector<Subject> subjects; // Dynamic subject management
 
 public:
-    // Constructor to initialize student details
-    Student(const string name = "", long long id = 0) 
-        : name(name), id(id) {
-        totalStudents++;
-    }
+    Student(const string &name = "", long long id = 0)
+        : name(name), id(id) {}
 
-    // Virtual destructor
-    virtual ~Student() {
-        totalStudents--;
-    }
+    virtual ~Student() = default;
 
-    // Pure virtual method to input student details
     virtual void inputDetails() = 0;
-
-    // Pure virtual method to display student details
     virtual void displayStudentDetails() const = 0;
-
-    // Method to display total number of students
-    static void displayTotalStudents() {
-        cout << "Total number of students: " << totalStudents << endl;
-    }
-
-    // Getter for subject
-    Subject &getSubject(int index) {
-        return subjects[index];
-    }
 };
 
-// Static variable to keep track of total number of students
-int Student::totalStudents = 0;
-
-// Derived class: GraduateStudent
+// Class for graduate students
 class GraduateStudent : public Student {
 private:
     string thesisTitle;
     string supervisorName;
 
 public:
-    // Constructor to initialize graduate student details
-    GraduateStudent(const string name = "", long long id = 0, 
-                    const string thesis = "", const string supervisor = "")
+    GraduateStudent(const string &name = "", long long id = 0,
+                    const string &thesis = "", const string &supervisor = "")
         : Student(name, id), thesisTitle(thesis), supervisorName(supervisor) {}
 
-    // Override method to input graduate student details
     void inputDetails() override {
         cout << "Enter student name: ";
         cin >> name;
@@ -98,8 +69,9 @@ public:
         cin >> id;
 
         for (int i = 0; i < 5; i++) {
-            cout << "Enter subject details: " << i + 1 << endl;
-            subjects[i].inputSubjectDetails();
+            Subject sub;
+            sub.inputSubjectDetails();
+            subjects.push_back(sub);
         }
 
         cout << "Enter thesis title: ";
@@ -109,58 +81,70 @@ public:
         getline(cin, supervisorName);
     }
 
-    // Override method to display graduate student details
     void displayStudentDetails() const override {
         cout << "Student name: " << name << endl;
         cout << "ID: " << id << endl;
-        for (int i = 0; i < 5; i++) {
-            subjects[i].displaySubjectDetails();
+        for (const auto &sub : subjects) {
+            sub.displaySubjectDetails();
         }
         cout << "Thesis Title: " << thesisTitle << endl;
         cout << "Supervisor Name: " << supervisorName << endl;
     }
 };
 
-int main() {
-    int numberOfStudents;
-    cout << "Enter the number of students: ";
-    cin >> numberOfStudents;
-    
-    // Use array of pointers to handle different types of students
-    Student **students = new Student*[numberOfStudents]; 
+// Class to manage students (Single Responsibility)
+class StudentManager {
+private:
+    vector<Student *> students; // Polymorphic container
 
-    for (int i = 0; i < numberOfStudents; i++) {
+public:
+    ~StudentManager() {
+        for (Student *student : students) {
+            delete student;
+        }
+        students.clear();
+    }
+
+    void addStudent() {
         int studentType;
-        cout << "Enter details for student " << i + 1 << ":" << endl;
         cout << "Is the student a (1) Graduate Student? ";
         cin >> studentType;
 
-        // Dynamically allocate the correct type of student
+        Student *student = nullptr;
         if (studentType == 1) {
-            students[i] = new GraduateStudent();
+            student = new GraduateStudent();
         } else {
             cout << "Invalid choice, defaulting to Graduate Student." << endl;
-            students[i] = new GraduateStudent();
+            student = new GraduateStudent();
         }
 
-        // Use polymorphic method
-        students[i]->inputDetails();
+        student->inputDetails();
+        students.push_back(student);
     }
 
-    // Display the details of each student using polymorphism
+    void displayAllStudents() const {
+        for (size_t i = 0; i < students.size(); ++i) {
+            cout << "\nDetails of student " << i + 1 << ":" << endl;
+            students[i]->displayStudentDetails();
+        }
+    }
+};
+
+// Main function
+int main() {
+    StudentManager manager;
+
+    int numberOfStudents;
+    cout << "Enter the number of students: ";
+    cin >> numberOfStudents;
+
     for (int i = 0; i < numberOfStudents; i++) {
-        cout << "\nDetails of student " << i + 1 << ":" << endl;
-        students[i]->displayStudentDetails(); // Polymorphic call
+        cout << "\nEntering details for student " << i + 1 << ":" << endl;
+        manager.addStudent();
     }
 
-    // Display the total number of students
-    Student::displayTotalStudents();
-
-    // Clean up dynamically allocated memory
-    for (int i = 0; i < numberOfStudents; i++) {
-        delete students[i]; // Clean up each student object
-    }
-    delete[] students; // Clean up the array of pointers
+    cout << "\nDisplaying all student details:" << endl;
+    manager.displayAllStudents();
 
     return 0;
 }
