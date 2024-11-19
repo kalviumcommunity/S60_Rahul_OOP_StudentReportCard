@@ -4,6 +4,9 @@
 #include <memory>
 using namespace std;
 
+// Enum for student types
+enum class StudentType { Regular, Graduate };
+
 // Class to manage Subject details
 class Subject {
 private:
@@ -32,30 +35,9 @@ protected:
     long long id;
     string name;
     vector<Subject> subjects; // List of subjects
+    StudentType type;
 
-public:
-    Student(const string &name = "", long long id = 0)
-        : name(name), id(id) {}
-
-    virtual ~Student() = default;
-
-    virtual void inputDetails() = 0;
-    virtual void displayStudentDetails() const = 0;
-    virtual string getType() const = 0; // For identifying student type
-};
-
-// Class for regular students
-class RegularStudent : public Student {
-public:
-    RegularStudent(const string &name = "", long long id = 0)
-        : Student(name, id) {}
-
-    void inputDetails() override {
-        cout << "Enter student name: ";
-        cin >> name;
-        cout << "Enter ID: ";
-        cin >> id;
-
+    void inputSubjects() {
         for (int i = 0; i < 5; i++) {
             Subject sub;
             sub.inputSubjectDetails();
@@ -63,15 +45,43 @@ public:
         }
     }
 
-    void displayStudentDetails() const override {
-        cout << "Student name: " << name << endl;
-        cout << "ID: " << id << endl;
+    void displaySubjects() const {
         for (const auto &sub : subjects) {
             sub.displaySubjectDetails();
         }
     }
 
-    string getType() const override {
+public:
+    Student(const string &name = "", long long id = 0, StudentType type = StudentType::Regular)
+        : name(name), id(id), type(type) {}
+
+    virtual ~Student() = default;
+
+    virtual void inputDetails() {
+        cout << "Enter student name: ";
+        cin >> name;
+        cout << "Enter ID: ";
+        cin >> id;
+        inputSubjects(); // Shared behavior
+    }
+
+    virtual void displayStudentDetails() const {
+        cout << "Student name: " << name << endl;
+        cout << "ID: " << id << endl;
+        displaySubjects(); // Shared behavior
+    }
+
+    virtual StudentType getType() const {
+        return type;
+    }
+};
+
+// Class for regular students
+class RegularStudent : public Student {
+public:
+    RegularStudent() : Student("", 0, StudentType::Regular) {}
+
+    string getTypeName() const {
         return "Regular Student";
     }
 };
@@ -83,22 +93,10 @@ private:
     string supervisorName;
 
 public:
-    GraduateStudent(const string &name = "", long long id = 0,
-                    const string &thesis = "", const string &supervisor = "")
-        : Student(name, id), thesisTitle(thesis), supervisorName(supervisor) {}
+    GraduateStudent() : Student("", 0, StudentType::Graduate) {}
 
     void inputDetails() override {
-        cout << "Enter student name: ";
-        cin >> name;
-        cout << "Enter ID: ";
-        cin >> id;
-
-        for (int i = 0; i < 5; i++) {
-            Subject sub;
-            sub.inputSubjectDetails();
-            subjects.push_back(sub);
-        }
-
+        Student::inputDetails(); // Reuse common input
         cout << "Enter thesis title: ";
         cin.ignore(); // Clear input buffer
         getline(cin, thesisTitle);
@@ -107,16 +105,12 @@ public:
     }
 
     void displayStudentDetails() const override {
-        cout << "Student name: " << name << endl;
-        cout << "ID: " << id << endl;
-        for (const auto &sub : subjects) {
-            sub.displaySubjectDetails();
-        }
+        Student::displayStudentDetails(); // Reuse common display
         cout << "Thesis Title: " << thesisTitle << endl;
         cout << "Supervisor Name: " << supervisorName << endl;
     }
 
-    string getType() const override {
+    string getTypeName() const {
         return "Graduate Student";
     }
 };
@@ -124,15 +118,18 @@ public:
 // Factory for creating student objects
 class StudentFactory {
 public:
-    static unique_ptr<Student> createStudent(int studentType) {
-        switch (studentType) {
-            case 1:
-                return make_unique<RegularStudent>();
-            case 2:
-                return make_unique<GraduateStudent>();
-            default:
-                cout << "Invalid choice. Defaulting to Regular Student." << endl;
-                return make_unique<RegularStudent>();
+    static unique_ptr<Student> createStudent() {
+        string type;
+        cout << "Enter student type (Regular/Graduate): ";
+        cin >> type;
+
+        if (type == "Regular") {
+            return make_unique<RegularStudent>();
+        } else if (type == "Graduate") {
+            return make_unique<GraduateStudent>();
+        } else {
+            cout << "Invalid choice. Defaulting to Regular Student." << endl;
+            return make_unique<RegularStudent>();
         }
     }
 };
@@ -144,18 +141,16 @@ private:
 
 public:
     void addStudent() {
-        int studentType;
-        cout << "Is the student (1) Regular or (2) Graduate? ";
-        cin >> studentType;
-
-        unique_ptr<Student> student = StudentFactory::createStudent(studentType);
+        unique_ptr<Student> student = StudentFactory::createStudent();
         student->inputDetails();
         students.push_back(move(student));
     }
 
     void displayAllStudents() const {
         for (size_t i = 0; i < students.size(); ++i) {
-            cout << "\nDetails of student " << i + 1 << " (" << students[i]->getType() << "):" << endl;
+            cout << "\nDetails of student " << i + 1 << " (" 
+                 << (students[i]->getType() == StudentType::Regular ? "Regular" : "Graduate") 
+                 << "):" << endl;
             students[i]->displayStudentDetails();
         }
     }
